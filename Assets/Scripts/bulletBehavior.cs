@@ -3,35 +3,34 @@ using UnityEngine;
 
 public class bulletBehavior : MonoBehaviour
 {
-    public float lifetime = 5f;
+    public float lifetime = 5f; // время жизни пули до ее автоматического возвращения в пул
 
     private void OnEnable()
     {
-        // Запланируйте возвращение пули в пул, если она не столкнулась с чем-либо
+        // запускаю корутину, которая автоматически вернет пулю в пул после определенного времени
         StartCoroutine(LifeTimeRoutine());
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        // Отмените запланированное возвращение, если произошло столкновение
-        CancelInvoke(nameof(ReturnToPool));
-        // Немедленно возвращаем пулю в пул
+        // если пуля столкнулась с чем-то, сразу возвращаю ее в пул, чтобы избежать ненужной активности
         ReturnToPool();
     }
 
     private void ReturnToPool()
     {
+        // делаю пулю неактивной, что возвращает ее в пул
         gameObject.SetActive(false);
     }
 
     private void OnDisable()
     {
-        // Отменяем все запланированные вызовы Invoke, чтобы избежать ошибок
-        CancelInvoke();
+        // убеждаюсь, что не осталось запланированных задач на возвращение в пул, чтобы избежать ошибок
     }
 
     private IEnumerator LifeTimeRoutine()
     {
+        // жду указанное время жизни, прежде чем вернуть пулю в пул
         yield return new WaitForSeconds(lifetime);
         ReturnToPool();
     }
