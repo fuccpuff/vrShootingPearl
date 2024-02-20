@@ -62,6 +62,8 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\BulletPool.cs" />
     <Compile Include="Assets\Scripts\GunShoot.cs" />
+    <Compile Include="Assets\Scripts\ScoreManager.cs" />
+    <Compile Include="Assets\Scripts\TargetBehavior.cs" />
     <Compile Include="Assets\Scripts\bulletBehavior.cs" />
   </ItemGroup>
   <ItemGroup>
