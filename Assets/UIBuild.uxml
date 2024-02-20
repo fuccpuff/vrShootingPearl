@@ -1,0 +1,5 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:Label tabindex="-1" text="Выстрелы: 0" parse-escape-sequences="true" display-tooltip-when-elided="true" style="width: 105px;" />
+    <ui:Label tabindex="-1" text="Очки: 0" parse-escape-sequences="true" display-tooltip-when-elided="true" style="width: 105px;" />
+    <ui:Label tabindex="-1" text="Точность: 0%" parse-escape-sequences="true" display-tooltip-when-elided="true" style="width: 93px;" />
+</ui:UXML>
