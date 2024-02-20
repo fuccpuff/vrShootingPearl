@@ -116,6 +116,7 @@ public class GunShoot : MonoBehaviour
                 boltSound.Play();
                 StartCoroutine(ResetShooting());
                 isEmptyMagazineSoundPlayed = false;
+                ScoreManager.Instance.RegisterShot();
             }
         }
         else if (currentAmmo == 0 && !isShooting && !isEmptyMagazineSoundPlayed)

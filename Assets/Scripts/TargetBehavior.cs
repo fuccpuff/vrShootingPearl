@@ -8,8 +8,8 @@ public class TargetBehavior : MonoBehaviour
     {
         if (other.CompareTag("Bullet"))
         {
-            ScoreManager.Instance.AddScore(points); // Добавляем очки через менеджер очков
-            gameObject.SetActive(false); // Делаем мишень неактивной
+            ScoreManager.Instance.RegisterHit(points); // Добавляем очки за попадание
+            gameObject.SetActive(false);
         }
     }
 }
