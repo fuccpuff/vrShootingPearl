@@ -1,41 +1,61 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class BulletPool : MonoBehaviour
 {
-    public static BulletPool SharedInstance; // делаю доступным общий экземпляр для доступа к пулу из других скриптов
-    public List<GameObject> pooledBullets; // список для хранения всех пуль в пуле
-    public GameObject bulletPrefab; // префаб пули, который будет использоваться для создания пулла
-    public int bulletAmount = 20; // начальное количество пуль в пуле
+    public static BulletPool SharedInstance;
+    public List<GameObject> pooledBullets;
+    public GameObject bulletPrefab;
+    public int bulletAmount = 20;
+    public int maxBullets = 100; // Максимальное количество пуль в пуле
 
     void Awake()
     {
-        SharedInstance = this; // инициализирую себя как общий экземпляр, чтобы другие скрипты могли обращаться к пулу
-        pooledBullets = new List<GameObject>(); // создаю список пуль
-        GameObject tmp;
-        for (int i = 0; i < bulletAmount; i++) // итерирую, чтобы создать начальное количество пуль
+        if (SharedInstance == null)
         {
-            tmp = Instantiate(bulletPrefab); // создаю пулю из префаба
-            tmp.SetActive(false); // изначально делаю пулю неактивной
-            pooledBullets.Add(tmp); // добавляю пулю в список
-            tmp.transform.parent = this.transform; // делаю пулю дочерним объектом для организации в иерархии, опционально
+            SharedInstance = this;
+            DontDestroyOnLoad(gameObject); // Сохраняем пул пуль между сценами
         }
+        else
+        {
+            Destroy(gameObject);
+        }
+
+        pooledBullets = new List<GameObject>();
+        InitializePool();
+    }
+
+    // Инициализация пула с предварительным "прогревом"
+    void InitializePool()
+    {
+        for (int i = 0; i < bulletAmount; i++)
+        {
+            AddBulletToPool();
+        }
+    }
+
+    GameObject AddBulletToPool()
+    {
+        if (pooledBullets.Count >= maxBullets) return null; // Проверяем, не превышен ли максимальный лимит
+
+        var newBullet = Instantiate(bulletPrefab, transform);
+        newBullet.SetActive(false);
+        pooledBullets.Add(newBullet);
+        return newBullet;
     }
 
     public GameObject GetPooledBullet()
     {
-        for (int i = 0; i < pooledBullets.Count; i++) // прохожусь по всем пулям в пуле
+        foreach (var bullet in pooledBullets)
         {
-            if (!pooledBullets[i].activeInHierarchy) // если нахожу неактивную в иерархии сцены пулю
+            if (!bullet.activeInHierarchy)
             {
-                return pooledBullets[i]; // возвращаю ее для использования
+                return bullet;
             }
         }
-        // если все пули используются, опционально создаю дополнительные
-        GameObject tmp = Instantiate(bulletPrefab); // создаю новую пулю
-        tmp.SetActive(false); // делаю ее неактивной
-        pooledBullets.Add(tmp); // добавляю в список пулла
-        tmp.transform.parent = this.transform; // делаю дочерним объектом для организации, опционально
-        return tmp; // возвращаю новую пулю
+
+        // Расширяем пул, если достигнут максимальный предел
+        return pooledBullets.Count < maxBullets ? AddBulletToPool() : null;
     }
 }

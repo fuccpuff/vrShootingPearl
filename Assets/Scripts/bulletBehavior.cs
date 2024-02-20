@@ -3,35 +3,41 @@ using UnityEngine;
 
 public class bulletBehavior : MonoBehaviour
 {
-    public float lifetime = 5f; // время жизни пули до ее автоматического возвращения в пул
+    public float lifetime = 5f; // Время жизни пули до ее автоматического возвращения в пул
+    public AudioClip hitSound; // Аудиоклип звука попадания
 
     private void OnEnable()
     {
-        // запускаю корутину, которая автоматически вернет пулю в пул после определенного времени
+        // Запускаю корутину, которая автоматически вернет пулю в пул после определенного времени
         StartCoroutine(LifeTimeRoutine());
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        // если пуля столкнулась с чем-то, сразу возвращаю ее в пул, чтобы избежать ненужной активности
+        // Если пуля столкнулась с целью, обрабатываю столкновение
+        if (other.CompareTag("Target"))
+        {
+            PlayHitSound(); // Воспроизвожу звук при попадании
+        }
+        ReturnToPool();
+    }
+
+    private void PlayHitSound()
+    {
+        // Воспроизведение звука попадания
+        AudioSource.PlayClipAtPoint(hitSound, transform.position);
+    }
+
+    private IEnumerator LifeTimeRoutine()
+    {
+        // Жду указанное время жизни, прежде чем вернуть пулю в пул
+        yield return new WaitForSeconds(lifetime);
         ReturnToPool();
     }
 
     private void ReturnToPool()
     {
-        // делаю пулю неактивной, что возвращает ее в пул
+        // Делаю пулю неактивной, что возвращает ее в пул
         gameObject.SetActive(false);
-    }
-
-    private void OnDisable()
-    {
-        // убеждаюсь, что не осталось запланированных задач на возвращение в пул, чтобы избежать ошибок
-    }
-
-    private IEnumerator LifeTimeRoutine()
-    {
-        // жду указанное время жизни, прежде чем вернуть пулю в пул
-        yield return new WaitForSeconds(lifetime);
-        ReturnToPool();
     }
 }
